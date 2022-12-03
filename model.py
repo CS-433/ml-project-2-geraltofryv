@@ -260,7 +260,7 @@ class UTAE(nn.Module):
         input_dim,
         encoder_widths=[64, 64, 64, 128],
         decoder_widths=[32, 32, 64, 128],
-        out_conv=[32, 20],
+        out_conv=[32, 2], #TEST a changer a 20
         str_conv_k=4,
         str_conv_s=2,
         str_conv_p=1,
@@ -384,7 +384,7 @@ class UTAE(nn.Module):
             out = self.down_blocks[i].smart_forward(feature_maps[-1])
             feature_maps.append(out)
         # TEMPORAL ENCODER
-        print("FEATURE MAP SHAPE : ", feature_maps[-1].shape) ## TEST
+        #print("FEATURE MAP SHAPE : ", feature_maps[-1].shape) ## TEST
         out, att = self.temporal_encoder(
             feature_maps[-1], batch_positions=batch_positions, pad_mask=pad_mask
         )
