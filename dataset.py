@@ -46,17 +46,11 @@ class YeastDataset(Dataset):
         for i, val in enumerate(list(set(num_of_set))):    
             groupby_each_set.append(list(mit.windowed(group_set[i], n=groupby, step=1)))
             group_id.append(list(mit.windowed(id_image[i], n=groupby, step=1)))
-        
-            
             
         self.group_consecutive_time = [item for sublist in groupby_each_set for item in sublist]
         self.group_id = [item for sublist in group_id for item in sublist]
 
         self.group_set = group_set
-        
-
-
-
 
 
     def __len__(self):

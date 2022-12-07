@@ -7,7 +7,6 @@ import torch.optim as optim
 import torchnet as tnt
 from miou import IoU
 from model import UTAE
-import dill as pickle
 import os
 import json
 import time
@@ -24,9 +23,9 @@ from utils import (
 
 
 LEARNING_RATE = 1e-4
-DEVICE = "cpu"
-#DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-BATCH_SIZE = 2
+#DEVICE = "cpu"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+BATCH_SIZE = 3
 NUM_EPOCHS = 3
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 256  # 1280 originally
@@ -92,7 +91,7 @@ def train_fn(loader,device, model, optimizer, loss_fn, scaler):
         predictions = model(x,batch_positions = dates)
 
 def iterate(
-    model, data_loader, criterion, num_classes = 2, ignore_index = -1,display_step = 50,device_str = 'cpu', optimizer=None, mode="train", device=None
+    model, data_loader, criterion, num_classes = 2, ignore_index = -1,display_step = 50,device_str = 'cuda', optimizer=None, mode="train", device=None
 ):
     loss_meter = tnt.meter.AverageValueMeter()
     iou_meter = IoU(
@@ -178,6 +177,7 @@ def main():
         ],
     )"""
     device = torch.device(DEVICE)
+    print(device)
     model = UTAE(input_dim=3).to(device)
     model.apply(weight_init)
     weights = torch.ones(NUM_CLASS, device=DEVICE).float()
@@ -317,6 +317,7 @@ def main():
         #check_accuracy(val_loader, model, device=DEVICE)
 
         # print some examples to a folder
+        #print(DEVICE, val_loader.get_device(),model.get_device())
         save_predictions_as_imgs(
             val_loader, model, folder="saved_images/", device=DEVICE
         )

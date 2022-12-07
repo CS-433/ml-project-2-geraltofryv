@@ -4,6 +4,8 @@ import re
 import torch
 import torchvision
 from dataset import YeastDataset
+import torch.nn as nn
+import dill as pickle
 from torch.utils.data import DataLoader
 from torch.nn import functional as F
 
@@ -29,7 +31,7 @@ def get_loaders(
     pin_memory=True,
     pad_value = 0
 ):
-    #collate_fn = lambda x: pad_collate(x, pad_value=pad_value)
+    collate_fn = lambda x: pad_collate(x, pad_value=pad_value)
     train_ds = YeastDataset(
         image_dir=train_dir,
         mask_dir=train_maskdir,
@@ -67,7 +69,7 @@ def get_loaders(
     return train_loader, val_loader
 
 
-def check_accuracy(loader, model, device="cpu"):
+def check_accuracy(loader, model, device="cuda"):
     num_correct = 0
     num_pixels = 0
     dice_score = 0
@@ -93,11 +95,16 @@ def check_accuracy(loader, model, device="cpu"):
 
 
 def save_predictions_as_imgs(
-    loader, model, folder="saved_images/", device="cpu"
+    loader, model, folder="saved_images/", device="cuda"
 ):
     model.eval()
+    #print(model)
+    #print(loader)
     for idx, ((x, dates), y) in enumerate(loader):
+        print(x.get_device(),dates.get_device(),y.get_device())
         x = x.to(device=device)
+        dates = dates.to(device=device)
+        y = y.to(device=device)
         with torch.no_grad():
             preds = torch.sigmoid(model(x, batch_positions = dates))
             preds = (preds > 0.5).float()

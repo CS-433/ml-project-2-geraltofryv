@@ -34,12 +34,13 @@ class ConfusionMatrix(Metric):
     Modified from: https://github.com/pytorch/tnt/blob/master/torchnet/meter/confusionmeter.py
     """
 
-    def __init__(self, num_classes, normalized=False, device='cpu', lazy=True):
+    def __init__(self, num_classes, normalized=False, device='cuda', lazy=True):
         super().__init__()
         if device == 'cpu':
             self.conf = np.ndarray((num_classes, num_classes), dtype=np.int64)
         else:
             self.conf = torch.zeros((num_classes, num_classes)).cuda()
+            print(device)
         self.normalized = normalized
         self.num_classes = num_classes
         self.device = device
@@ -148,7 +149,7 @@ class IoU(Metric):
     when computing the IoU. Can be an int, or any iterable of ints.
     """
 
-    def __init__(self, num_classes, normalized=False, ignore_index=None, cm_device='cpu', lazy=True):
+    def __init__(self, num_classes, normalized=False, ignore_index=None, cm_device='cuda', lazy=True):
         super().__init__()
         self.conf_metric = ConfusionMatrix(num_classes, normalized, device=cm_device, lazy=lazy)
         self.lazy = lazy
@@ -219,6 +220,7 @@ class IoU(Metric):
 
     def get_miou_acc(self):
         conf_matrix = self.conf_metric.value()
+        print(conf_matrix)
         if torch.is_tensor(conf_matrix):
             conf_matrix = conf_matrix.cpu().numpy()
         if self.ignore_index is not None:
@@ -233,5 +235,6 @@ class IoU(Metric):
             iou = true_positive / (true_positive + false_positive + false_negative)
         miou = float(np.nanmean(iou) * 100)
         acc = float(np.diag(conf_matrix).sum() / conf_matrix.sum() * 100)
+        print(miou,acc)
 
         return miou, acc
