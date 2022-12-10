@@ -223,9 +223,9 @@ class IoU(Metric):
         print(conf_matrix)
         if torch.is_tensor(conf_matrix):
             conf_matrix = conf_matrix.cpu().numpy()
-        if self.ignore_index is not None:
+        """if self.ignore_index is not None:
             conf_matrix[:, self.ignore_index] = 0
-            conf_matrix[self.ignore_index, :] = 0
+            conf_matrix[self.ignore_index, :] = 0"""
         true_positive = np.diag(conf_matrix)
         false_positive = np.sum(conf_matrix, 0) - true_positive
         false_negative = np.sum(conf_matrix, 1) - true_positive
