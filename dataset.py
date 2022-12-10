@@ -74,11 +74,13 @@ class YeastDataset(Dataset):
         mask[mask == 30] = 0.0
         set_images = np.moveaxis(set_images, 3,1)
         set_im_torch = torch.from_numpy(set_images).float()
+        norm = torch.nn.InstanceNorm2d(3)
+        set_norm_img = norm(set_im_torch)
         mask_torch = torch.from_numpy(mask).float()
         index_id = torch.from_numpy(np.array(index_id))
         
 
-        return (set_im_torch, index_id ), mask_torch
+        return (set_norm_img, index_id ), mask_torch
     
 
 
