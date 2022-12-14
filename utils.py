@@ -95,7 +95,7 @@ def check_accuracy(loader, model, device="cuda"):
 
 
 def save_predictions_as_imgs(
-    loader, model, folder="saved_images/", device="cuda"
+    loader, model, folder="image-save/", device="cuda"
 ):
     model.eval()
     #print(model)
@@ -106,11 +106,18 @@ def save_predictions_as_imgs(
         dates = dates.to(device=device)
         y = y.to(device=device)
         with torch.no_grad():
-            preds = torch.sigmoid(model(x, batch_positions = dates))
-            preds = (preds > 0.5).float()
-            print("PRINT PRED BRO", preds.shape)
+            #preds = torch.sigmoid(model(x, batch_positions = dates))
+            #preds = (preds > 0.5).float()
+            sempred = model(x, batch_positions = dates).argmax(dim=1)
+            print("sempred = model(x, batch_positions = dates) -->", sempred.shape)
+            sempred = sempred.float().cpu()
+            print("sempred = sempred.argmax(dim=1).float().cpu()", sempred.shape)
+        
+        y = y.float().cpu()
+            
+          
         torchvision.utils.save_image(
-            preds, f"{folder}/pred_{idx}.png"
+            sempred, f"{folder}/pred_{idx}.png"
         )
         torchvision.utils.save_image(y.unsqueeze(1), f"{folder}{idx}.png")
 

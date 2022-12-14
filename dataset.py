@@ -63,6 +63,7 @@ class YeastDataset(Dataset):
         index_id = self.group_id[index]
         for i, name in enumerate(self.group_consecutive_time[index]):
             img_path = os.path.join(self.image_dir, name)
+            img = np.array(Image.open(img_path).convert("RGB"))
             set_images.append(np.array(Image.open(img_path).convert("RGB")))
             
 
@@ -77,7 +78,9 @@ class YeastDataset(Dataset):
         norm = torch.nn.InstanceNorm2d(3)
         set_norm_img = norm(set_im_torch)
         mask_torch = torch.from_numpy(mask).float()
+        #mask_torch_GS = mask_torch[None,:]
         index_id = torch.from_numpy(np.array(index_id))
+        
         
 
         return (set_norm_img, index_id ), mask_torch
