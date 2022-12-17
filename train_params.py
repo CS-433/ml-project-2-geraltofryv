@@ -27,7 +27,7 @@ LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 3
 NUM_EPOCHS = 2
-NUM_WORKERS = 2
+NUM_WORKERS = 12
 IMAGE_HEIGHT = 256  # 1280 originally
 IMAGE_WIDTH = 256  # 1918 originally
 PIN_MEMORY = True
@@ -37,7 +37,7 @@ TRAIN_MASK_DIR = "dtsub/train_mask/"
 VAL_IMG_DIR = "dtsub/val_input/"
 VAL_MASK_DIR = "dtsub/val_mask/"
 RES_DIR = "result/"
-GROUPBY_list = [3,5,7,9,11]
+GROUPBY_list = [3,5]
 PAD_VALUE = 0
 NUM_CLASS = 2
 IGNORE_INDEX = -1
@@ -123,7 +123,7 @@ def main():
               train_metrics = iterate(
                   model,
                   data_loader=train_loader,
-                  criterion=criterion,
+                  criterion=loss_fn,
                   num_classes = NUM_CLASS, 
                   ignore_index = IGNORE_INDEX, 
                   display_step = DISPLAY_STEP,
@@ -140,7 +140,7 @@ def main():
                   val_metrics = iterate(
                       model,
                       data_loader=val_loader,
-                      criterion=criterion,
+                      criterion=loss_fn,
                       num_classes = NUM_CLASS, 
                       ignore_index = IGNORE_INDEX, 
                       display_step = DISPLAY_STEP,

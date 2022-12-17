@@ -70,35 +70,9 @@ def recursive_todevice(x, device):
     else:
         return [recursive_todevice(c, device) for c in x]
 
-def train_fn(loader,device, model, optimizer, loss_fn, scaler):
-    #loop= tqdm(loader)
-    
-    """for batch_idx, (data, targets) in enumerate(loop):
-        print("TENSOR SHAPE", data[0].shape)
-        data = data[0].to(device=DEVICE)
-        targets = targets.float().unsqueeze(1).to(device=DEVICE)
 
-        # forward
-        with torch.cuda.amp.autocast():
-            predictions = model(input= data[0], batch_positions=data[1])
-            loss = loss_fn(predictions, targets)
 
-        # backward
-        optimizer.zero_grad()
-        scaler.scale(loss).backward()
-        scaler.step(optimizer)
-        scaler.update()
-
-        # update tqdm loop
-        loop.set_postfix(loss=loss.item())"""
-    
-    for i , batch in enumerate(loader):
-        if device is not None:
-            batch = recursive_todevice(batch,device)
-        (x,dates), y = batch
-        predictions = model(x,batch_positions = dates)
-
-def iterate(
+"""def iterate(
     model, data_loader, criterion, num_classes = NUM_CLASS, ignore_index = -1,display_step = 50,device_str = 'cuda', optimizer=None, mode="train", device=None
 ):
     loss_meter = tnt.meter.AverageValueMeter()
@@ -154,6 +128,65 @@ def iterate(
     if mode == "test":
         return metrics, iou_meter.conf_metric.value()  # confusion matrix
     else:
+        return metrics"""
+
+def iterate(
+    model, data_loader, criterion, num_classes = 2, ignore_index = -1,display_step = 50,device_str ='cuda', optimizer=None, mode="train", device=None
+):
+    loss_meter = tnt.meter.AverageValueMeter()
+    iou_meter = IoU(
+        num_classes=num_classes,
+        ignore_index=ignore_index,
+        cm_device=device_str,
+    )
+
+    t_start = time.time()
+    for i, batch in enumerate(data_loader):
+        if device is not None:
+            batch = recursive_todevice(batch, device)
+        (x, dates), y = batch
+        y = y.long().squeeze(1)
+
+        if mode != "train":
+            with torch.no_grad():
+                out = model(x, batch_positions=dates).squeeze(1)
+                pred = torch.round(torch.sigmoid(out))
+        else:
+            optimizer.zero_grad()
+            out = model(x, batch_positions=dates).squeeze(1)
+            with torch.no_grad():
+              pred = torch.round(torch.sigmoid(out))
+
+        loss = criterion(out.squeeze(), y.float().squeeze(0).squeeze(1))
+        if mode == "train":
+            loss.backward()
+            optimizer.step()
+
+        iou_meter.add(pred.long(), y)
+        loss_meter.add(loss.item())
+
+        if (i + 1) % display_step == 0:
+            miou, acc = iou_meter.get_miou_acc()
+            print(
+                "Step [{}/{}], Loss: {:.4f}, Acc : {:.2f}, mIoU {:.2f}".format(
+                    i + 1, len(data_loader), loss_meter.value()[0], acc, miou
+                )
+            )
+
+    t_end = time.time()
+    total_time = t_end - t_start
+    print("Epoch time : {:.1f}s".format(total_time))
+    miou, acc = iou_meter.get_miou_acc()
+    metrics = {
+        "{}_accuracy".format(mode): acc,
+        "{}_loss".format(mode): loss_meter.value()[0],
+        "{}_IoU".format(mode): miou,
+        "{}_epoch_time".format(mode): total_time,
+    }
+
+    if mode == "test":
+        return metrics, iou_meter.conf_metric.value()  # confusion matrix
+    else:
         return metrics
 
 
@@ -166,7 +199,6 @@ def main():
     weights = torch.ones(NUM_CLASS, device=DEVICE).float()
     weights[IGNORE_INDEX] = 0
     criterion = nn.CrossEntropyLoss(weight=weights)
-    loss_fn = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
     train_loader, val_loader = get_loaders(

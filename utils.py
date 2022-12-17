@@ -107,8 +107,11 @@ def save_predictions_as_imgs(
             #preds = torch.sigmoid(model(x, batch_positions = dates))
             #preds = (preds > 0.5).float()
             sempred = model(x, batch_positions = dates).argmax(dim=1).float()
+            #out = model(x,batch_positions=dates).squeeze()
+            #sempred =torch.round(torch.sigmoid(out)).float().cpu()
             print("sempred = model(x, batch_positions = dates) -->", sempred.shape)
-            
+
+           
             
             
             
