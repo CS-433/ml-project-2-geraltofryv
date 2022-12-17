@@ -24,6 +24,7 @@ def get_loaders(
     val_dir,
     val_maskdir,
     groupby,
+    mask_pos,
     batch_size,
     num_workers=4,
     pin_memory=True,
@@ -33,6 +34,7 @@ def get_loaders(
     train_ds = YeastDataset(
         image_dir=train_dir,
         mask_dir=train_maskdir,
+        mask_index = mask_pos,
         groupby = groupby,
     )
     
@@ -50,6 +52,7 @@ def get_loaders(
     val_ds = YeastDataset(
         image_dir=val_dir,
         mask_dir=val_maskdir,
+        mask_index = mask_pos,
         groupby = groupby,
     )
 

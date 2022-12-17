@@ -26,7 +26,7 @@ LEARNING_RATE = 1e-4
 #DEVICE = "cpu"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 3
-NUM_EPOCHS = 2
+NUM_EPOCHS = 6
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 256  # 1280 originally
 IMAGE_WIDTH = 256  # 1918 originally
@@ -176,6 +176,7 @@ def main():
         VAL_MASK_DIR,
         GROUPBY,
         BATCH_SIZE,
+        MASK_POS,
         #train_transform,
         #val_transforms,
         NUM_WORKERS,
@@ -183,8 +184,8 @@ def main():
         PAD_VALUE,
     )
 
-    if LOAD_MODEL:
-        load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
+    """if LOAD_MODEL:
+        load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)"""
 
     
     

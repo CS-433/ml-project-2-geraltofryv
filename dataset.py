@@ -14,7 +14,7 @@ def natural_keys(text):
     return [ atoi(c) for c in re.split(r'(\d+)', text) ]
 
 class YeastDataset(Dataset):
-    def __init__(self, image_dir, mask_dir, middle_index = True, mask_index=0, groupby = 3):
+    def __init__(self, image_dir, mask_dir, mask_index, groupby = 3):
         self.image_dir = image_dir
         self.mask_dir = mask_dir
         images = os.listdir(image_dir)
@@ -50,10 +50,8 @@ class YeastDataset(Dataset):
         self.group_id = [item for sublist in group_id for item in sublist]
 
         self.group_set = group_set
-        if middle_index:
-            self.mask_index = int((groupby- 1)/2)
-        else:
-            self.mask_index = mask_index
+        
+        self.mask_index = mask_index
 
 
     def __len__(self):

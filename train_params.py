@@ -37,7 +37,7 @@ TRAIN_MASK_DIR = "dtsub/train_mask/"
 VAL_IMG_DIR = "dtsub/val_input/"
 VAL_MASK_DIR = "dtsub/val_mask/"
 RES_DIR = "result/"
-GROUPBY_list = [3,5]
+GROUPBY_list = [3,5,7,9,11]
 PAD_VALUE = 0
 NUM_CLASS = 2
 IGNORE_INDEX = -1
@@ -99,16 +99,15 @@ def main():
               VAL_IMG_DIR,
               VAL_MASK_DIR,
               GROUPBY,
+              MASK_POS,
               BATCH_SIZE,
-              #train_transform,
-              #val_transforms,
               NUM_WORKERS,
               PIN_MEMORY,
               PAD_VALUE,
           )
 
-          if LOAD_MODEL:
-              load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
+          """if LOAD_MODEL:
+              load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)"""
 
           
           
