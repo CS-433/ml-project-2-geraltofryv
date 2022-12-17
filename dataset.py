@@ -14,10 +14,9 @@ def natural_keys(text):
     return [ atoi(c) for c in re.split(r'(\d+)', text) ]
 
 class YeastDataset(Dataset):
-    def __init__(self, image_dir, mask_dir, transform = None, groupby = 3):
+    def __init__(self, image_dir, mask_dir, middle_index = True, mask_index=0, groupby = 3):
         self.image_dir = image_dir
         self.mask_dir = mask_dir
-        self.transform = transform
         images = os.listdir(image_dir)
         images.sort(key= natural_keys)
         num_of_set = []
@@ -51,6 +50,10 @@ class YeastDataset(Dataset):
         self.group_id = [item for sublist in group_id for item in sublist]
 
         self.group_set = group_set
+        if middle_index:
+            self.mask_index = int((groupby- 1)/2)
+        else:
+            self.mask_index = mask_index
 
 
     def __len__(self):
@@ -68,8 +71,8 @@ class YeastDataset(Dataset):
             
 
         set_images = np.array(set_images)
-        middleIndex = int((len(self.group_consecutive_time[index]) - 1)/2) # pick the middle mask
-        mask_path = os.path.join(self.mask_dir, self.group_consecutive_time[index][middleIndex]).replace("_input.png", "_mask.png")
+        #middleIndex = int((len(self.group_consecutive_time[index]) - 1)/2) # pick the middle mask
+        mask_path = os.path.join(self.mask_dir, self.group_consecutive_time[index][self.mask_index]).replace("_input.png", "_mask.png")
         mask = np.array(Image.open(mask_path).convert("L"), dtype=np.float32)
         mask[mask > 30] = 1.0
         mask[mask == 30] = 0.0

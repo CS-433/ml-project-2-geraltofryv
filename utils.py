@@ -25,17 +25,14 @@ def get_loaders(
     val_maskdir,
     groupby,
     batch_size,
-    #train_transform,
-    #val_transform,
     num_workers=4,
     pin_memory=True,
     pad_value = 0
 ):
-    collate_fn = lambda x: pad_collate(x, pad_value=pad_value)
+    
     train_ds = YeastDataset(
         image_dir=train_dir,
         mask_dir=train_maskdir,
-        #transform=train_transform,
         groupby = groupby,
     )
     
@@ -46,14 +43,13 @@ def get_loaders(
         num_workers=num_workers,
         pin_memory=pin_memory,
         shuffle=True,
-        #collate_fn=collate_fn,
+        
 
     )
 
     val_ds = YeastDataset(
         image_dir=val_dir,
         mask_dir=val_maskdir,
-        #transform=val_transform,
         groupby = groupby,
     )
 
@@ -63,7 +59,6 @@ def get_loaders(
         num_workers=num_workers,
         pin_memory=pin_memory,
         shuffle=False,
-        #collate_fn=collate_fn,
     )
 
     return train_loader, val_loader
@@ -101,27 +96,29 @@ def save_predictions_as_imgs(
     #print(model)
     #print(loader)
     for idx, ((x, dates), y) in enumerate(loader):
-        print(x.get_device(),dates.get_device(),y.get_device())
+        #print(x.get_device(),dates.get_device(),y.get_device())
         x = x.to(device=device)
         dates = dates.to(device=device)
         y = y.to(device=device)
         with torch.no_grad():
             #preds = torch.sigmoid(model(x, batch_positions = dates))
             #preds = (preds > 0.5).float()
-            sempred = model(x, batch_positions = dates).argmax(dim=1)
+            sempred = model(x, batch_positions = dates).argmax(dim=1).float()
             print("sempred = model(x, batch_positions = dates) -->", sempred.shape)
-            sempred = sempred.float().cpu()
-            print("sempred = sempred.argmax(dim=1).float().cpu()", sempred.shape)
-        
-        y = y.float().cpu()
+            
+            
+            
             
           
         torchvision.utils.save_image(
-            sempred, f"{folder}/pred_{idx}.png"
+            sempred.unsqueeze(1), f"{folder}/pred_{idx}.png"
         )
         torchvision.utils.save_image(y.unsqueeze(1), f"{folder}{idx}.png")
+        
 
     model.train()
+
+
 
 
 def pad_collate(batch, pad_value=0):

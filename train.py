@@ -26,33 +26,41 @@ LEARNING_RATE = 1e-4
 #DEVICE = "cpu"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 3
-NUM_EPOCHS = 3
+NUM_EPOCHS = 2
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 256  # 1280 originally
 IMAGE_WIDTH = 256  # 1918 originally
 PIN_MEMORY = True
 LOAD_MODEL = False
-TRAIN_IMG_DIR = "data_sub/train_input/"
-TRAIN_MASK_DIR = "data_sub/train_mask/"
-VAL_IMG_DIR = "data_sub/val_input/"
-VAL_MASK_DIR = "data_sub/val_mask/"
+TRAIN_IMG_DIR = "dtsub/train_input/"
+TRAIN_MASK_DIR = "dtsub/train_mask/"
+VAL_IMG_DIR = "dtsub/val_input/"
+VAL_MASK_DIR = "dtsub/val_mask/"
 RES_DIR = "result/"
-GROUPBY = 3
+GROUPBY = 11
 PAD_VALUE = 0
 NUM_CLASS = 2
 IGNORE_INDEX = -1
 DISPLAY_STEP = 50
 VAL_EVERY = 1
 VAL_AFTER = 0
+MASK_POS = int((GROUPBY- 1)/2)
+FOLD_GROUPBY = f'Groupby_{GROUPBY}_result'
+MODEL_PTH_SAVE = f"model_groupby_{GROUPBY}_maskpos_{MASK_POS}.pth.tar"
 
 
-
-def checkpoint( log, config):
+def checkpoint( log,fold_groupby, res_dir):
     with open(
-        os.path.join(RES_DIR, "trainlog.json"), "w"
+        os.path.join(res_dir, fold_groupby, "trainlog.json"), "w"
     ) as outfile:
         json.dump(log, outfile, indent=4)
 
+def save_results(metrics, fold_groupby, res_dir, groupby, mask_pos ):
+    with open(
+        os.path.join(res_dir,fold_groupby, f"groupby_{groupby}_maskpos_{mask_pos}_metric.json"), "w"
+    ) as outfile:
+        json.dump(metrics, outfile, indent=4)
+    
 
 def recursive_todevice(x, device):
     if isinstance(x, torch.Tensor):
@@ -91,7 +99,7 @@ def train_fn(loader,device, model, optimizer, loss_fn, scaler):
         predictions = model(x,batch_positions = dates)
 
 def iterate(
-    model, data_loader, criterion, num_classes = 2, ignore_index = -1,display_step = 50,device_str = 'cuda', optimizer=None, mode="train", device=None
+    model, data_loader, criterion, num_classes = NUM_CLASS, ignore_index = -1,display_step = 50,device_str = 'cuda', optimizer=None, mode="train", device=None
 ):
     loss_meter = tnt.meter.AverageValueMeter()
     iou_meter = IoU(
@@ -150,32 +158,7 @@ def iterate(
 
 
 def main():
-    """train_transform = A.Compose(
-        [
-            A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
-            A.Rotate(limit=35, p=1.0),
-            A.HorizontalFlip(p=0.5),
-            A.VerticalFlip(p=0.1),
-            A.Normalize(
-                mean=[0.0, 0.0, 0.0],
-                std=[1.0, 1.0, 1.0],
-                max_pixel_value=255.0,
-            ),
-            ToTensorV2(),
-        ],
-    )
-
-    val_transforms = A.Compose(
-        [
-            A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
-            A.Normalize(
-                mean=[0.0, 0.0, 0.0],
-                std=[1.0, 1.0, 1.0],
-                max_pixel_value=255.0,
-            ),
-            ToTensorV2(),
-        ],
-    )"""
+    
     device = torch.device(DEVICE)
     print(device)
     model = UTAE(input_dim=3).to(device)
@@ -204,7 +187,7 @@ def main():
         load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
 
     
-    #check_accuracy(val_loader, model, device=DEVICE)
+    
     
     trainlog = {}
     best_mIoU = 0
@@ -228,7 +211,7 @@ def main():
         )
         print("Train set passed iterate function")
         
-        if epoch % VAL_EVERY == 0 and epoch >= VAL_AFTER:
+        if epoch % VAL_EVERY == 0:
             print("Validation . . . ")
             model.eval()
             val_metrics = iterate(
@@ -251,7 +234,7 @@ def main():
                 )
             )
             trainlog[epoch] = {**train_metrics, **val_metrics}
-            checkpoint(trainlog, RES_DIR)
+            checkpoint(trainlog, FOLD_GROUPBY, RES_DIR)
             print('val metrics iou HERE', val_metrics["val_IoU"])
             if val_metrics["val_IoU"] >= best_mIoU:
                 best_mIoU = val_metrics["val_IoU"]
@@ -263,64 +246,29 @@ def main():
                         "optimizer": optimizer.state_dict(),
                     },
                     os.path.join(
-                        RES_DIR, "model.pth.tar"
+                        RES_DIR,FOLD_GROUPBY, MODEL_PTH_SAVE
                     ),
                 )
         else:
             trainlog[epoch] = {**train_metrics}
-            checkpoint(trainlog, RES_DIR)
+            checkpoint(trainlog, FOLD_GROUPBY, RES_DIR)
         print("Testing best epoch . . .")
         model.load_state_dict(
             torch.load(
                 os.path.join(
-                RES_DIR,  "model.pth.tar"
+                RES_DIR,FOLD_GROUPBY,  MODEL_PTH_SAVE
                 )
             )["state_dict"]
         )
         
-        """print(
-            "Los {:.4f},  Acc {:.2f},  IoU {:.4f}".format(
-            val_metrics["test_loss"],
-            val_metrics["test_accuracy"],
-            val_metrics["test_IoU"],
-            )
-        )"""
-            
-        """model.eval()
-        test_merics, conf_mat = iterate(
-            modl,
-            dat_loader=test_loader,
-            crierion=criterion,
-            conig=config,
-            optmizer=optimizer,
-            mod="test",
-            devce=device,
         
-        print
-            "Los {:.4f},  Acc {:.2f},  IoU {:.4f}".format(
-            test_metrics["test_loss"],
-            test_metrics["test_accuracy"],
-            test_metrics["test_IoU"],
-            
-        
-        save_reults(fold + 1, test_metrics, conf_mat.cpu().numpy(), config)"""
-    
-
-        # save model
-        """checkpoint = {
-            "state_dict": model.state_dict(),
-            "optimizer":optimizer.state_dict(),
-        }
-        save_checkpoint(checkpoint)"""
-
-        # check accuracy
-        #check_accuracy(val_loader, model, device=DEVICE)
 
         # print some examples to a folder
         #print(DEVICE, val_loader.get_device(),model.get_device())
         save_predictions_as_imgs(
             val_loader, model, folder="saved_images/", device=DEVICE
         )
+    save_results(trainlog,FOLD_GROUPBY, RES_DIR, GROUPBY, MASK_POS )
 
 
 if __name__ == "__main__":
