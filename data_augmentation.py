@@ -11,8 +11,8 @@ import torchvision
 import tensorflow as tf
 from keras import layers
 
-TRAIN_IMG_DIR = "data_sub/train_input/"
-TRAIN_MASK_DIR = "data_sub/train_mask/"
+TRAIN_IMG_DIR = "dtsub/train_input/"
+TRAIN_MASK_DIR = "dtsub/train_mask/"
 
 def rot_and_flip(img) :
     processed_img = tf.image.rot90(img)
@@ -71,4 +71,4 @@ for dir in both_dirs :
             flipped_img = crop(set_2_img) 
             tf.keras.utils.save_img(dir + "set_"+str(int(og_set_nb)+3)+"_time_"+str(timepoint)+end_file_name,flipped_img,data_format = "channels_last")
 
-print("New training sets and their corresponding masks have been generated in data_sub/train_input/ and data_sub/train_mask/")
+print("New training sets and their corresponding masks have been generated in dt_sub/train_input/ and dt_sub/train_mask/")

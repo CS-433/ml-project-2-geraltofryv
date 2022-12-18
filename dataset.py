@@ -5,6 +5,7 @@ import numpy as np
 import more_itertools as mit
 import torch
 import re
+import cv2 as cv
 
 
 def atoi(text):
@@ -72,8 +73,10 @@ class YeastDataset(Dataset):
         #middleIndex = int((len(self.group_consecutive_time[index]) - 1)/2) # pick the middle mask
         mask_path = os.path.join(self.mask_dir, self.group_consecutive_time[index][self.mask_index]).replace("_input.png", "_mask.png")
         mask = np.array(Image.open(mask_path).convert("L"), dtype=np.float32)
-        mask[mask > 30] = 1.0
-        mask[mask == 30] = 0.0
+        _,mask = cv.threshold(mask,127, 1, cv.THRESH_BINARY)
+        #print(mask)
+        #mask[mask > 30] = 1.0
+        #mask[mask == 30] = 0.0
         set_images = np.moveaxis(set_images, 3,1)
         set_im_torch = torch.from_numpy(set_images).float()
         norm = torch.nn.InstanceNorm2d(3)
@@ -81,7 +84,6 @@ class YeastDataset(Dataset):
         mask_torch = torch.from_numpy(mask).float()
         #mask_torch_GS = mask_torch[None,:]
         index_id = torch.from_numpy(np.array(index_id))
-        
         
 
         return (set_norm_img, index_id ), mask_torch
