@@ -26,8 +26,8 @@ LEARNING_RATE = 1e-4
 #DEVICE = "cpu"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 3
-NUM_EPOCHS = 6
-NUM_WORKERS = 2
+NUM_EPOCHS = 1
+NUM_WORKERS = 11
 IMAGE_HEIGHT = 256  # 1280 originally
 IMAGE_WIDTH = 256  # 1918 originally
 PIN_MEMORY = True
@@ -36,7 +36,7 @@ TRAIN_IMG_DIR = "dtsub/train_input/"
 TRAIN_MASK_DIR = "dtsub/train_mask/"
 VAL_IMG_DIR = "dtsub/val_input/"
 VAL_MASK_DIR = "dtsub/val_mask/"
-RES_DIR = "result/"
+RES_DIR = "result_augmented_data/"
 GROUPBY = 11
 PAD_VALUE = 0
 NUM_CLASS = 2
@@ -47,6 +47,13 @@ VAL_AFTER = 0
 MASK_POS = int((GROUPBY- 1)/2)
 FOLD_GROUPBY = f'Groupby_{GROUPBY}_result'
 MODEL_PTH_SAVE = f"model_groupby_{GROUPBY}_maskpos_{MASK_POS}.pth.tar"
+
+directory = os.path.join(RES_DIR,FOLD_GROUPBY)
+isExist = os.path.exists(directory)
+if not isExist:
+  # Create a new directory because it does not exist
+  os.makedirs(directory)
+  print("The new directory is created!")
 
 
 def checkpoint( log,fold_groupby, res_dir):
@@ -199,6 +206,7 @@ def main():
     weights = torch.ones(NUM_CLASS, device=DEVICE).float()
     weights[IGNORE_INDEX] = 0
     criterion = nn.CrossEntropyLoss(weight=weights)
+    loss_fn = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
     train_loader, val_loader = get_loaders(
@@ -207,8 +215,8 @@ def main():
         VAL_IMG_DIR,
         VAL_MASK_DIR,
         GROUPBY,
-        BATCH_SIZE,
         MASK_POS,
+        BATCH_SIZE,
         #train_transform,
         #val_transforms,
         NUM_WORKERS,
@@ -233,7 +241,7 @@ def main():
         train_metrics = iterate(
             model,
             data_loader=train_loader,
-            criterion=criterion,
+            criterion=loss_fn,
             num_classes = NUM_CLASS, 
             ignore_index = IGNORE_INDEX, 
             display_step = DISPLAY_STEP,
@@ -250,7 +258,7 @@ def main():
             val_metrics = iterate(
                 model,
                 data_loader=val_loader,
-                criterion=criterion,
+                criterion=loss_fn,
                 num_classes = NUM_CLASS, 
                 ignore_index = IGNORE_INDEX, 
                 display_step = DISPLAY_STEP,
@@ -299,7 +307,7 @@ def main():
         # print some examples to a folder
         #print(DEVICE, val_loader.get_device(),model.get_device())
         save_predictions_as_imgs(
-            val_loader, model, folder="saved_images/", device=DEVICE
+            val_loader, model, folder="saved_images_augmented_data/", device=DEVICE
         )
     save_results(trainlog,FOLD_GROUPBY, RES_DIR, GROUPBY, MASK_POS )
 

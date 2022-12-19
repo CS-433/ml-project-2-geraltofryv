@@ -96,34 +96,23 @@ def save_predictions_as_imgs(
     loader, model, folder="image-save/", device="cuda"
 ):
     model.eval()
-    #print(model)
-    #print(loader)
     for idx, ((x, dates), y) in enumerate(loader):
-        #print(x.get_device(),dates.get_device(),y.get_device())
         x = x.to(device=device)
         dates = dates.to(device=device)
         y = y.to(device=device)
         with torch.no_grad():
-            #preds = torch.sigmoid(model(x, batch_positions = dates))
-            #preds = (preds > 0.5).float()
-            sempred = model(x, batch_positions = dates).argmax(dim=1).float()
-            #out = model(x,batch_positions=dates).squeeze()
-            #sempred =torch.round(torch.sigmoid(out)).float().cpu()
-            print("sempred = model(x, batch_positions = dates) -->", sempred.shape)
-
-           
-            
-            
-            
+            out = model(x, batch_positions=dates).squeeze()
+            pred = torch.round(torch.sigmoid(out)).float().cpu()
+        
+        y = y.squeeze().float().cpu()
+        print("PRED SHAPE", pred.unsqueeze(1).shape)
           
         torchvision.utils.save_image(
-            sempred.unsqueeze(1), f"{folder}/pred_{idx}.png"
+            pred.unsqueeze(1), f"{folder}/pred_{idx}.png"
         )
-        torchvision.utils.save_image(y.unsqueeze(1), f"{folder}{idx}.png")
-        
+        torchvision.utils.save_image(y.unsqueeze(1), f"{folder}/{idx}.png")
 
     model.train()
-
 
 
 
