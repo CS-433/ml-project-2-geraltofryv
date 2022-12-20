@@ -26,8 +26,8 @@ LEARNING_RATE = 1e-4
 #DEVICE = "cpu"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 3
-NUM_EPOCHS = 1
-NUM_WORKERS = 11
+NUM_EPOCHS = 2
+NUM_WORKERS = 4
 IMAGE_HEIGHT = 256  # 1280 originally
 IMAGE_WIDTH = 256  # 1918 originally
 PIN_MEMORY = True
@@ -37,14 +37,15 @@ TRAIN_MASK_DIR = "dtsub/train_mask/"
 VAL_IMG_DIR = "dtsub/val_input/"
 VAL_MASK_DIR = "dtsub/val_mask/"
 RES_DIR = "result_augmented_data/"
-GROUPBY = 11
+GROUPBY = 7
 PAD_VALUE = 0
 NUM_CLASS = 2
 IGNORE_INDEX = -1
 DISPLAY_STEP = 50
 VAL_EVERY = 1
 VAL_AFTER = 0
-MASK_POS = int((GROUPBY- 1)/2)
+MASK_POS = 0
+#MASK_POS = int((GROUPBY- 1)/2)
 FOLD_GROUPBY = f'Groupby_{GROUPBY}_result'
 MODEL_PTH_SAVE = f"model_groupby_{GROUPBY}_maskpos_{MASK_POS}.pth.tar"
 
@@ -79,63 +80,7 @@ def recursive_todevice(x, device):
 
 
 
-"""def iterate(
-    model, data_loader, criterion, num_classes = NUM_CLASS, ignore_index = -1,display_step = 50,device_str = 'cuda', optimizer=None, mode="train", device=None
-):
-    loss_meter = tnt.meter.AverageValueMeter()
-    iou_meter = IoU(
-        num_classes=num_classes,
-        ignore_index=ignore_index,
-        cm_device=device_str,
-    )
 
-    t_start = time.time()
-    for i, batch in enumerate(data_loader):
-        if device is not None:
-            batch = recursive_todevice(batch, device)
-        (x, dates), y = batch
-        y = y.long()
-
-        if mode != "train":
-            with torch.no_grad():
-                out = model(x, batch_positions=dates)
-        else:
-            optimizer.zero_grad()
-            out = model(x, batch_positions=dates)
-
-        loss = criterion(out, y)
-        if mode == "train":
-            loss.backward()
-            optimizer.step()
-
-        with torch.no_grad():
-            pred = out.argmax(dim=1)
-        iou_meter.add(pred, y)
-        loss_meter.add(loss.item())
-
-        if (i + 1) % display_step == 0:
-            miou, acc = iou_meter.get_miou_acc()
-            print(
-                "Step [{}/{}], Loss: {:.4f}, Acc : {:.2f}, mIoU {:.2f}".format(
-                    i + 1, len(data_loader), loss_meter.value()[0], acc, miou
-                )
-            )
-
-    t_end = time.time()
-    total_time = t_end - t_start
-    print("Epoch time : {:.1f}s".format(total_time))
-    miou, acc = iou_meter.get_miou_acc()
-    metrics = {
-        "{}_accuracy".format(mode): acc,
-        "{}_loss".format(mode): loss_meter.value()[0],
-        "{}_IoU".format(mode): miou,
-        "{}_epoch_time".format(mode): total_time,
-    }
-
-    if mode == "test":
-        return metrics, iou_meter.conf_metric.value()  # confusion matrix
-    else:
-        return metrics"""
 
 def iterate(
     model, data_loader, criterion, num_classes = 2, ignore_index = -1,display_step = 50,device_str ='cuda', optimizer=None, mode="train", device=None
@@ -217,8 +162,6 @@ def main():
         GROUPBY,
         MASK_POS,
         BATCH_SIZE,
-        #train_transform,
-        #val_transforms,
         NUM_WORKERS,
         PIN_MEMORY,
         PAD_VALUE,
@@ -226,6 +169,8 @@ def main():
 
     """if LOAD_MODEL:
         load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)"""
+
+
 
     
     
@@ -235,7 +180,7 @@ def main():
     for epoch in range(NUM_EPOCHS):
         print("EPOCH number ->", epoch)
         #train_fn(train_loader, DEVICE, model, optimizer, loss_fn, scaler)
-        print("EPOCH {}/{}".format(epoch, NUM_EPOCHS))
+        print("EPOCH {}/{}".format(epoch+1, NUM_EPOCHS))
 
         model.train()
         train_metrics = iterate(
