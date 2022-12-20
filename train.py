@@ -14,10 +14,7 @@ from model.metrics import confusion_matrix_analysis
 
 from model.weight_init import weight_init
 from model.utils import (
-    load_checkpoint,
-    save_checkpoint,
     get_loaders,
-    check_accuracy,
     save_predictions_as_imgs,
 )
 
@@ -36,7 +33,7 @@ TRAIN_MASK_DIR = "dtsub/train_mask/"
 VAL_IMG_DIR = "dtsub/val_input/"
 VAL_MASK_DIR = "dtsub/val_mask/"
 RES_DIR = "result_augmented_data/"
-GROUPBY = 11
+GROUPBY = 3
 PAD_VALUE = 0
 NUM_CLASS = 2
 IGNORE_INDEX = -1
