@@ -11,8 +11,8 @@ import torchvision
 import tensorflow as tf
 from keras import layers
 
-TRAIN_IMG_DIR = "dtsub/train_input/"
-TRAIN_MASK_DIR = "dtsub/train_mask/"
+TRAIN_IMG_DIR = "../dtsub/train_input/"
+TRAIN_MASK_DIR = "../dtsub/train_mask/"
 
 def rot_and_flip(img) :
     processed_img = tf.image.rot90(img)

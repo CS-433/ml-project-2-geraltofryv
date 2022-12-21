@@ -18,7 +18,7 @@ import matplotlib.image
 
 #Folder path
 #initialization data
-folder_data = "../dataset" # where we store the dataset
+folder_data = "../ds" # where we store the dataset
 split_train_test = "../dtsub" #folder where we divided the dataset into train_input train_mask val_input val_mask
 
 # Function to sort the string filename corresponding to the set and time
