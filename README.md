@@ -49,4 +49,7 @@ To organize our code, we divide the used functions into different Python files:
     
 ## UTAE Model
 
+## Parameter selection: 
+Our model is based on the grouping of time-series images. In our case, we used `train_params.py` to find the best groupby value and mask position to predict. We used this on augmented data, and found that groupby=7 and mask_pos=6 give us the best result, evaluted on 100 epochs. The mask_pos is highly suceptible to stochastic noise, so it is not an absolute result. To reproduce these data, run the following command: 
+
 
