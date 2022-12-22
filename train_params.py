@@ -22,7 +22,7 @@ LEARNING_RATE = 1e-4
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 3
-NUM_EPOCHS = 2
+NUM_EPOCHS = 30
 NUM_WORKERS = 4
 IMAGE_HEIGHT = 256  # 1280 originally
 IMAGE_WIDTH = 256  # 1918 originally
@@ -40,11 +40,11 @@ IGNORE_INDEX = -1
 DISPLAY_STEP = 50
 VAL_EVERY = 1
 VAL_AFTER = 0
-ALL_MASK_list = [[0,1],
-            [0,1],
-            [5,6],
-            [6,8],
-            [7,10]
+ALL_MASK_list = [[0,1,2],
+            [0,2,4],
+            [0,2,3,5,6],
+            [0,2,4,6,8],
+            [0,2,5,7,8,10]
           ]
 
 MODEL_PTH_SAVE_list = []
