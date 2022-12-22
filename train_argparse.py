@@ -161,9 +161,9 @@ def main():
     )
     parser.add_argument("--epochs", default=2, type=int, help="Number of epochs per fold")
     parser.add_argument("--batch_size", default=3, type=int, help="Batch size")
-    parser.add_argument("--lr", default=0.001, type=float, help="Learning rate")
-    parser.add_argument("--groupby", default=3, type=int, help="Number of time frames to consitute the temporal groups")
-    parser.add_argument("--maskpos", default=0, type=int, help="Number of time frames to consitute the temporal groups")
+    parser.add_argument("--lr", default=0.0001, type=float, help="Learning rate")
+    parser.add_argument("--groupby", default=5, type=int, help="Number of time frames to consitute the temporal groups")
+    parser.add_argument("--maskpos", default=2, type=int, help="Number of time frames to consitute the temporal groups")
     config=parser.parse_args()
 
     # directory of the dataset
@@ -213,7 +213,6 @@ def main():
     model.apply(weight_init)
     weights = torch.ones(NUM_CLASS, device=DEVICE).float()
     weights[IGNORE_INDEX] = 0
-    criterion = nn.CrossEntropyLoss(weight=weights)
     loss_fn = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
@@ -233,7 +232,7 @@ def main():
     
 
     
-    #check_accuracy(val_loader, model, device=DEVICE)
+    
     
     trainlog = {}
     best_mIoU = 0
