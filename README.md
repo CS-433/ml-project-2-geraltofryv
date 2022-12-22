@@ -43,9 +43,9 @@ To organize our code, we divide the used functions into different Python files:
 
 - `train_params.py`: hyperparameter tuning of our UTAE model and store the results in folder `result_augmented`
 
-- `train_argparse.py`: train UTAE model with specific parameters.
+- `train_argparse.py`: tune a train UTAE model and save predicted image on `saved_images` folder. You can modify the hyperparameter and the folder via the terminal.
 
-- Folder `plot_graph_result`: contain `plot_results.ipynb` which is used too plot the results that we get from `train_params.py`
+- Folder `plot_graph_result`: contain `plot_results.ipynb` which is used too plot the results that we get from `train_params.py`. We put on the repository on `result` the result that we get for different training.
     
 ## UTAE Model
 
