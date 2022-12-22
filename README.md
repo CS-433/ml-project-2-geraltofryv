@@ -45,6 +45,8 @@ To organize our code, we divide the used functions into different Python files:
 
 - `train_argparse.py`: tune a train UTAE model and save predicted image on `saved_images` folder. You can modify the hyperparameter and the folder via the terminal.
 
+- `predicted_images.py`: from a model.tar.pth already saved, it generates images predictions.
+
 - Folder `plot_graph_result`: contain `plot_results.ipynb` which is used too plot the results that we get from `train_params.py`. We put on the repository on `result` the result that we get for different training.
     
 ## UTAE Model
@@ -54,6 +56,9 @@ Our model is based on the grouping of time-series images. In our case, we used `
 
     python train_argparse.py --epochs 100 --groupby 7 --maskpos 6
 
+In the file `result/groupby_7_augmented_100_epochs/model_groupby_7_maskpos_6.pth.tar`, we already saved the model above. To get access to the predicted images whitout passing through the 100 epochs, you can run `predicted_images.py` and it generate the predicted images in `saved_images_directly`: 
+
+    python predicted_images.py
 
 ## Reference
 

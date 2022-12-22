@@ -41,7 +41,7 @@ def main():
 
     parser.add_argument(
       "--saved_images",
-      default = "saved_images_TEST/",
+      default = "saved_images_directly/",
       help= "folder where predicted images are stored"
     )
     parser.add_argument(
@@ -60,11 +60,11 @@ def main():
       default="result/Groupby_5_result_augmented_100_epochs",
       help = "Path containing model.pth.tar"
     )
-    parser.add_argument("--groupby", default=5, type=int, help="Number of time frames to consitute the temporal groups")
-    parser.add_argument("--maskpos", default=2, type=int, help="Number of time frames to consitute the temporal groups")
+    parser.add_argument("--groupby", default=7, type=int, help="Number of time frames to consitute the temporal groups")
+    parser.add_argument("--maskpos", default=6, type=int, help="Number of time frames to consitute the temporal groups")
     parser.add_argument(
       "--fold",
-      default="Groupby_5_result_augmented_100_epochs/",
+      default="Groupby_7_result_augmented_100_epochs/",
       help = "fold containing model.pth.tar"
     )
     parser.add_argument("--batch_size", default=3, type=int, help="Batch size")
