@@ -91,7 +91,6 @@ def main():
           model.apply(weight_init)
           weights = torch.ones(NUM_CLASS, device=DEVICE).float()
           weights[IGNORE_INDEX] = 0
-          criterion = nn.CrossEntropyLoss(weight=weights)
           loss_fn = nn.BCEWithLogitsLoss()
           optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
