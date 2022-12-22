@@ -3,7 +3,7 @@
 ## The project:
 In this repository, we implement U-Net with Temporal Attention Encoder (UTAE) model to evaluate the efficiency of temporal attention for budding yeast cells segmentation.
 Through a binary classification, the task is to predict a mask that segment cells.
-Initially, the data are stored in tiff file in the folder "cropped". To get access to our final dataset, you have to run `image_preprocessing/split_data_crop_set_3.py`, which extract the set of images and split them on train and test set and store them in "dtsub" folder, and `image_preprocessing/data_augmentation.py, which creates more data on the training set.
+Initially, the data are stored in tiff file in the folder "cropped". To get access to our final dataset, you have to run `image_preprocessing/split_data_crop_set_3.py`, which extract the set of images and split them on train and test set and store them in "dtsub" folder, and `image_preprocessing/data_augmentation.py`, which creates more data on the training set.
 The external libraries that we use were:
     - torch and torchnet to implement deep learning model
     - tensorflow to get augmented data
