@@ -29,19 +29,21 @@ The external libraries that we use were:
 
 ##  Architecture
 To organize our code, we divide the used functions into different Python files:
-    - Folder `image_preprocessing`: contain `split_data_crop_set_3.py` and `data_augmentation.py` which allow to generate our wanted datas from `cropped` folder.
-    - Folder `model`: contains the python files used for the construction of UTAE model, the creation of the dataset and the calculation of metrics
-            - `dataset.py`: loading the dataset
-            - `metrics.py`: calculate the confusion matrix and mIoU(code from the article "Panoptic Segmentation Of Satellite Image Time Series With Convolutional Temporal    Attention Network")
-            - `mIoU.py`: calculate IoU accuracy (code from the article "Panoptic Segmentation Of Satellite Image Time Series With Convolutional Temporal Attention Network")
-            - `model.py`: implementation of UTAE model (code from the article "Panoptic Segmentation Of Satellite Image Time Series With Convolutional Temporal Attention Network")
-            - `mltae.py`: implementation of Lightweight Temporal Attention Encoder (L-TAE) for image time series and Multi-Head Attention module (code from the article "Panoptic Segmentation Of Satellite Image Time Series With Convolutional Temporal Attention Network")
-            - `positional_encoding.py`: implementation of positional encoder (code from the article "Panoptic Segmentation Of Satellite Image Time Series With Convolutional Temporal Attention Network")
-            - `weight_init.py`: Initializes a model's parameters (code from the article "Panoptic Segmentation Of Satellite Image Time Series With Convolutional Temporal Attention Network")
-            - `utils.py`: load the training and test set and save the predicted images.
-    - `train_params.py`: hyperparameter tuning of our UTAE model and store the results in folder `result_augmented`
-    - `train_argparse.py`: train UTAE model with specific parameters.
-    - Folder `plot_graph_result`: contain `plot_results.ipynb` which is used too plot the results that we get from `train_params.py`
+
+- Folder `image_preprocessing`: contain `split_data_crop_set_3.py` and `data_augmentation.py` which allow to generate our wanted datas from `cropped` folder.
+- Folder `model`: contains the python files used for the construction of UTAE model, the creation of the dataset and the calculation of metrics
+        - `dataset.py`: loading the dataset
+        - `metrics.py`: calculate the confusion matrix and mIoU(code from the article "Panoptic Segmentation Of Satellite Image Time Series With Convolutional Temporal    Attention Network")
+        - `mIoU.py`: calculate IoU accuracy (code from the article "Panoptic Segmentation Of Satellite Image Time Series With Convolutional Temporal Attention Network")
+        - `model.py`: implementation of UTAE model (code from the article "Panoptic Segmentation Of Satellite Image Time Series With Convolutional Temporal Attention Network")
+        - `mltae.py`: implementation of Lightweight Temporal Attention Encoder (L-TAE) for image time series and Multi-Head Attention module (code from the article "Panoptic Segmentation Of Satellite Image Time Series With Convolutional Temporal Attention Network")
+        - `positional_encoding.py`: implementation of positional encoder (code from the article "Panoptic Segmentation Of Satellite Image Time Series With Convolutional Temporal Attention Network")
+        - `weight_init.py`: Initializes a model's parameters (code from the article "Panoptic Segmentation Of Satellite Image Time Series With Convolutional Temporal Attention Network")
+        - `utils.py`: load the training and test set and save the predicted images.
+
+- `train_params.py`: hyperparameter tuning of our UTAE model and store the results in folder `result_augmented`
+- `train_argparse.py`: train UTAE model with specific parameters.
+- Folder `plot_graph_result`: contain `plot_results.ipynb` which is used too plot the results that we get from `train_params.py`
     
 ## UTAE Model
 
