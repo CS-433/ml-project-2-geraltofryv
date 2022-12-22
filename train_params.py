@@ -1,4 +1,4 @@
-from train import iterate, checkpoint, save_results
+from train_argparse import iterate, checkpoint, save_results
 import torch
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
