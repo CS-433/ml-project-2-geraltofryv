@@ -48,8 +48,6 @@ To organize our code, we divide the used functions into different Python files:
 - `predicted_images.py`: from a model.tar.pth already saved, it generates images predictions.
 
 - Folder `plot_graph_result`: contain `plot_results.ipynb` which is used too plot the results that we get from `train_params.py`. We put on the repository on `result` the result that we get for different training.
-    
-## UTAE Model
 
 ## Parameter selection: 
 Our model is based on the grouping of time-series images. In our case, we used `train_params.py` to find the best groupby value and mask position to predict. We used this on augmented data, and found that `groupb`=7 and `maskpos`=6 give us the best result, evaluted on 100 epochs. The other hyperparameters used are indicated as default ones in the `train_argparse.py` file. The maskpos is highly suceptible to stochastic noise, so it is not an absolute result. To reproduce these data, run the following command: 
