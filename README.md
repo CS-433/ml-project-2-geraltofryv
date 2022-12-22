@@ -53,12 +53,14 @@ To organize our code, we divide the used functions into different Python files:
 Our model is based on the grouping of time-series images. In our case, we used `train_params.py` to find the best groupby value and mask position to predict. We used this on augmented data, and found that `groupb`=7 and `maskpos`=6 give us the best result, evaluted on 100 epochs. The other hyperparameters used are indicated as default ones in the `train_argparse.py` file. The maskpos is highly suceptible to stochastic noise, so it is not an absolute result. To reproduce these data, run the following command: 
 
     python train_argparse.py --epochs 100 --groupby 7 --maskpos 6
-    
-##Reference
-@article{garnot2021panoptic,
-  title={Panoptic Segmentation of Satellite Image Time Series with Convolutional Temporal Attention Networks},
-  author={Sainte Fare Garnot, Vivien  and Landrieu, Loic },
-  journal={ICCV},
-  year={2021}
-}
+
+
+## Reference
+
+    @article{garnot2021panoptic,
+      title={Panoptic Segmentation of Satellite Image Time Series with Convolutional Temporal Attention Networks},
+      author={Sainte Fare Garnot, Vivien  and Landrieu, Loic },
+      journal={ICCV},
+      year={2021}
+    }
 
