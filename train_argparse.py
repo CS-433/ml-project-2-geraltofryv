@@ -241,7 +241,6 @@ def main():
     val_metrics_arr=[]
     for epoch in range(NUM_EPOCHS):
         print("EPOCH number ->", epoch)
-        #train_fn(train_loader, DEVICE, model, optimizer, loss_fn, scaler)
         print("EPOCH {}/{}".format(epoch+1, NUM_EPOCHS))
 
         model.train()
