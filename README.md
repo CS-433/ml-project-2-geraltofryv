@@ -60,7 +60,7 @@ In the file `result/groupby_7_augmented_100_epochs/model_groupby_7_maskpos_6.pth
 
 ## Execution
 
-We would highly advise that you use a Colab notebook if you want to train the model yourself. For quicker run, you can selct GPU in the Ressources parameters of Colab. 
+We would highly advise that you use a Colab notebook if you want to train the model yourself. For quicker run, you can select GPU in the Ressources parameters of Colab. 
 
 ## Reference
 
